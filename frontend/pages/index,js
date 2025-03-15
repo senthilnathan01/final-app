@@ -1,0 +1,73 @@
+import { useState } from 'react';
+
+export default function Home() {
+  const [result, setResult] = useState(null);
+  const [inputs, setInputs] = useState({
+    url: '',
+    age: 30,
+    occupation: 'software engineer',
+    techSavviness: 7,
+    goal: ''
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch('/api/simulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(inputs)
+    });
+    const data = await response.json();
+    setResult(data);
+  };
+
+  return (
+    <div className="container">
+      <h1>System 1 Thinking Simulator</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Website URL:</label>
+          <input type="url" required 
+            value={inputs.url}
+            onChange={e => setInputs({...inputs, url: e.target.value})}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Age:</label>
+          <input type="number" required
+            value={inputs.age}
+            onChange={e => setInputs({...inputs, age: e.target.value})}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Occupation:</label>
+          <input type="text" required
+            value={inputs.occupation}
+            onChange={e => setInputs({...inputs, occupation: e.target.value})}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Goal:</label>
+          <textarea required
+            value={inputs.goal}
+            onChange={e => setInputs({...inputs, goal: e.target.value})}
+          />
+        </div>
+
+        <button type="submit">Simulate Thinking</button>
+      </form>
+
+      {result && (
+        <div className="result">
+          <h2>Simulation Result</h2>
+          <p><strong>Action:</strong> {result.action}</p>
+          <p><strong>Reason:</strong> {result.reason}</p>
+          <p><strong>Confidence:</strong> {result.confidence}%</p>
+        </div>
+      )}
+    </div>
+  );
+}
